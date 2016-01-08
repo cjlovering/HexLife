@@ -176,7 +176,10 @@
                 var x,
                     y,
                     xx,
-                    yy;
+                    yy,
+                    test,
+                    test2,
+                    i;
 
                 x = eventInfo.offsetX || eventInfo.layerX;
                 y = eventInfo.offsetY || eventInfo.layerY;
@@ -184,45 +187,31 @@
                 yy = Math.floor(y / (hexHeight + sideLength));
                 xx = Math.floor((x - (yy % 2) * hexRadius) / hexRectangleWidth);
 
-                if(yy%2 == 0){
+                if (yy%2 == 0) {
 
-                    var test2 = [[0, -1], [1, -1], [1, 0], [ 0, 1], [ -1, 0], [0, 0 ], [-1, 1], [-1, -1]];
+                    test2 = [[0, -1], [1, -1], [1, 0], [ 0, 1], [ -1, 0], [0, 0 ], [-1, 1], [-1, -1]];
 
-                    for (var i = 0; i < test2.length; i++){
-                        if ( xx + test2[i][0] >= 0 && xx + test2[i][0] < boardWidth && yy + test2[i][1] >= 0 && yy + test2[i][1] < boardHeight )
-                        {      
-                            cells[ xx + test2[i][0] ][ yy + test2[i][1] ].Kill();
-                        }   
-                    }
-
-                    var test = [[-1, -2], [0, -2], [1, -2], [1, -1], [1, 1], [1, 2], [0, 2], [-1, 2], [-2, 1], [-2, 0], [-2, -1], [2, 0]];
-
-                    for (var i = 0; i < test.length; i++){
-                        if ((xx + test[i][0] >= 0 && xx + test[i][0] < boardWidth) && ( yy + test[i][1] >= 0 && yy + test[i][1] < boardHeight))
-                            {
-                                cells[xx + test[i][0]][yy + test[i][1]].Live();
-                            }   
-                    }
+                    test = [[-1, -2], [0, -2], [1, -2], [1, -1], [1, 1], [1, 2], [0, 2], [-1, 2], [-2, 1], [-2, 0], [-2, -1], [2, 0]];
 
                 } else {
 
-                    var test2 = [[0, -1], [1, -1], [1, 0], [ 1, 1], [ 0, 1], [0, 0 ], [-1, 0]];
+                    test2 = [[0, -1], [1, -1], [1, 0], [ 1, 1], [ 0, 1], [0, 0 ], [-1, 0]];
 
-                    for (var i = 0; i < test2.length; i++){
-                        if ( xx + test2[i][0] >= 0 && xx + test2[i][0] < boardWidth && yy + test2[i][1] >= 0 && yy + test2[i][1] < boardHeight )
-                        {      
-                            cells[ xx + test2[i][0] ][ yy + test2[i][1] ].Kill();
+                    test = [[-2, 0], [-1, -1], [-1, -2], [0, -2], [1, -2], [2, -1], [2, 0], [2, 1], [1, 2], [0, 2], [-1, 2], [-1, 1]];
+                }
+
+                for (i = 0; i < test2.length; i++){
+                    if ( xx + test2[i][0] >= 0 && xx + test2[i][0] < boardWidth && yy + test2[i][1] >= 0 && yy + test2[i][1] < boardHeight )
+                    {      
+                        cells[ xx + test2[i][0] ][ yy + test2[i][1] ].Kill();
+                    }   
+                }
+
+                for (i = 0; i < test.length; i++){
+                    if ((xx + test[i][0] >= 0 && xx + test[i][0] < boardWidth) && ( yy + test[i][1] >= 0 && yy + test[i][1] < boardHeight))
+                        {
+                            cells[xx + test[i][0]][yy + test[i][1]].Live();
                         }   
-                    }
-
-                    var test = [[-2, 0], [-1, -1], [-1, -2], [0, -2], [1, -2], [2, -1], [2, 0], [2, 1], [1, 2], [0, 2], [-1, 2], [-1, 1]];
-
-                    for (var i = 0; i < test.length; i++){
-                        if ((xx + test[i][0] >= 0 && xx + test[i][0] < boardWidth) && ( yy + test[i][1] >= 0 && yy + test[i][1] < boardHeight))
-                            {
-                                cells[xx + test[i][0]][yy + test[i][1]].Live();
-                            }   
-                    }
                 }
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -257,18 +246,17 @@
                 hexY = Math.floor(y / (hexHeight + sideLength));
                 hexX = Math.floor((x - (hexY % 2) * hexRadius) / hexRectangleWidth);
 
-               if(hexX >= 0 && hexX < boardWidth) {
-                    if(hexY >= 0 && hexY < boardHeight) {
-                        if(currentHex != cells[hexX][hexY]){
-                             cells[hexX][hexY].Live();
-                             cells[hexX][hexY].Draw();
-                        }
+               if((hexX >= 0 && hexX < boardWidth) && (hexY >= 0 && hexY < boardHeight)) {
+                    if(currentHex != cells[hexX][hexY]){
+                        currentHex = cells[hexX][hexY];
+                        currentHex.Live();
+                        currentHex.Draw();
                     }
                 }
             } 
             
             function getColor(n){
-                var colors    = ["#FFD700", "#ccff66", "#66ccff", "#ff6fcf", "#ff6666"];
+                var colors    = [ "#ccff66", "#FFD700","#66ccff", "#ff6fcf", "#ff6666"];
                 n %= colors.length;
                 return colors[n];
             }
