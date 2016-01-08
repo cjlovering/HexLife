@@ -5,6 +5,8 @@
             var color = 0;
 
             var canvas;
+            var resizeId;
+
 
             var ctx, currentHex = new Hexagon();
 
@@ -17,23 +19,22 @@
                 boardWidth = 75,
                 boardHeight = 75;
 
-            var cells = CreateCellArray();
+            var cells = createCellArray();
 
-            var fps = 550;
+            var rate = 250;
 
-            window.onload = function(){
+            $(document).ready(function(){
                 
                 canvas = document.getElementById('hexmap');
-                canvas.width  = window.innerWidth;
-                canvas.height = window.innerHeight;
+               
 
                 if (canvas.getContext){
-               
+                
                     configureHexagonParameters();
 
                     ctx = canvas.getContext('2d');
 
-                    PopulateCellArray();
+                    populateCellArray();
                     drawBoard(ctx, boardWidth, boardHeight);
 
                     canvas.addEventListener("mousemove", function(eventInfo) {
@@ -46,7 +47,6 @@
                         //currentHex.Draw();
                     });
 
-                    var resizeId;
                     $(window).resize(function(){
                         clearTimeout(resizeId);
                         resizeId = setTimeout(onResizeDraw, 300);
@@ -54,7 +54,7 @@
 
                     loop();
                 }
-            }
+            });
 
 
             function Rules(n, l){
@@ -125,13 +125,13 @@
                 }
             }
 
-            function CreateCellArray(){
+            function createCellArray(){
                 var arr = [];
                 for ( var i = 0; i < boardWidth; i++) arr[i] = []
                 return arr;
             }
 
-            function PopulateCellArray(){
+            function populateCellArray(){
                 for ( var i = 0; i < boardWidth; i++)
                     for ( var j = 0; j < boardHeight; j++)
                         cells[i][j] = new Hexagon(i,j);
@@ -149,7 +149,7 @@
                     drawBoard(ctx, boardWidth, boardHeight);
 
                     loop();
-                }, fps)
+                }, rate)
             }
 
             function inject(eventInfo){
@@ -204,11 +204,7 @@
                 ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                ctx.fillStyle = "#000000";
-                ctx.lineWidth = 1;
-
-                canvas.width  = window.innerWidth;
-                canvas.height = window.innerHeight;
+                configureHexagonParameters();
                 drawBoard(ctx, boardWidth, boardHeight);
             }
 
@@ -279,6 +275,17 @@
             }
 
             function configureHexagonParameters(){
+                // canvas.width  = window.innerWidth;
+                // canvas.height = window.innerHeight;
+                var h = $(window).height();
+                var w = $(window).width();
+
+                canvas.width = w;
+                canvas.height = h;  
+
+
+
+
                 sideLength = canvas.height > canvas.width ? canvas.height / boardHeight : canvas.width / boardWidth ;
                 hexHeight = Math.sin(hexagonAngle) * sideLength;
                 hexRadius = Math.cos(hexagonAngle) * sideLength;
