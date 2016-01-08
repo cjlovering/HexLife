@@ -41,27 +41,42 @@
         this.x = x;
         this.y = y;
         this.live = false;
+        this.next = false;
         this.n = 0;
 
         this.Play = function(){
-            this.live = Rules(this.Neighbors(), this.live);
+            this.next = Rules(this.Neighbors(), this.live);
         }
 
-        this.Kill = function(){ this.live = false; }
+        this.Kill = function(){ this.next = false; }
 
-        this.Live = function(){ this.live = true; }
+        this.Live = function(){ this.next = true; }
 
-        this.Alive = function(){return this.live; }
+        this.Alive = function(){ return this.live; }
 
         this.Neighbors = function(){
-            var n = 0;
-            var test = [[this.x, this.y - 1],[this.x + 1, this.y -1], [this.x + 1, this.y], [this.x + 1, this.y + 1], [this.x, this.y + 1], [this.x - 1, this.y]];
+           
+            var test, n = 0; 
+        
 
-            for (var i = 0; i < test.length; i++){
-                if ((test[i][0] >= 0 && test[i][0] < boardWidth) && (test[i][1] >= 0 && test[i][1] < boardHeight)) {      
-                    if (cells[test[i][0]][test[i][1]].Alive()) n += 1;
-                }       
+            if(this.y%2 == 0){
+
+                test = [[0, -1], [1, -1], [1, 0], [ 0, 1], [ -1, 0], [-1, 1], [-1, -1]]; //[0, 0 ],
+
+            } else {
+
+                test = [[0, -1], [1, -1], [1, 0], [ 0, 1], [-1, 0], [ 1, 1] ]; //[0, 0 ], 
+
             }
+
+            
+            for (var i = 0; i < test.length; i++){
+                if ( this.x + test[i][0] >= 0 && this.x + test[i][0] < boardWidth && this.y + test[i][1] >= 0 && this.y + test[i][1] < boardHeight )
+                {      
+                    if (cells[ this.x + test[i][0] ][ this.y + test[i][1] ].Alive()) n += 1;
+                }   
+            }
+
             this.n = n;
             return n;
         }
@@ -71,7 +86,8 @@
             var screenY = this.y * (hexHeight + sideLength);
 
             ctx.fillStyle = getColor(this.n);
-            drawHexagon(ctx, screenX, screenY, this.live);         //Rules(this.Neighbors(), this.live)
+            drawHexagon(ctx, screenX, screenY, this.next);         //Rules(this.Neighbors(), this.live)
+            this.live = this.next;
         }
     }
 
@@ -166,26 +182,46 @@
         yy = Math.floor(y / (hexHeight + sideLength));
         xx = Math.floor((x - (yy % 2) * hexRadius) / hexRectangleWidth);
 
+        if(yy%2 == 0){
 
-        var test2 = [[0, -1], [1, -1], [1, 0], [ 0, 1], [ -1, 0], [0, 0 ], [-1, 1], [-1, -1]];
+            var test2 = [[0, -1], [1, -1], [1, 0], [ 0, 1], [ -1, 0], [0, 0 ], [-1, 1], [-1, -1]];
 
-        for (var i = 0; i < test2.length; i++){
-            if ( xx + test2[i][0] >= 0 && xx + test2[i][0] < boardWidth && yy + test2[i][1] >= 0 && yy + test2[i][1] < boardHeight )
-            {      
-                cells[ xx + test2[i][0] ][ yy + test2[i][1] ].Kill();
-            }   
-        }
-
-        var test = [[-1, -2],[0, -2], [1, -2], [1, -1], [1, 1] [2, 0], [1, 2], [0, 2], [-1, 2], [-2, 1], [-2, 0], [-2, -1]];
-
-        for (var i = 0; i < test.length; i++){
-            if ((xx + test[i][0] >= 0 && xx + test[i][0] < boardWidth) && ( yy + test[i][1] >= 0 && yy + test[i][1] < boardHeight))
-                {
-                    cells[xx + test[i][0]][yy + test[i][1]].Live();
+            for (var i = 0; i < test2.length; i++){
+                if ( xx + test2[i][0] >= 0 && xx + test2[i][0] < boardWidth && yy + test2[i][1] >= 0 && yy + test2[i][1] < boardHeight )
+                {      
+                    cells[ xx + test2[i][0] ][ yy + test2[i][1] ].Kill();
                 }   
+            }
+
+            var test = [[-1, -2], [0, -2], [1, -2], [1, -1], [1, 1], [1, 2], [0, 2], [-1, 2], [-2, 1], [-2, 0], [-2, -1], [2, 0]];
+
+            for (var i = 0; i < test.length; i++){
+                if ((xx + test[i][0] >= 0 && xx + test[i][0] < boardWidth) && ( yy + test[i][1] >= 0 && yy + test[i][1] < boardHeight))
+                    {
+                        cells[xx + test[i][0]][yy + test[i][1]].Live();
+                    }   
+            }
+
+        } else {
+
+            var test2 = [[0, -1], [1, -1], [1, 0], [ 1, 1], [ 0, 1], [0, 0 ], [-1, 0]];
+
+            for (var i = 0; i < test2.length; i++){
+                if ( xx + test2[i][0] >= 0 && xx + test2[i][0] < boardWidth && yy + test2[i][1] >= 0 && yy + test2[i][1] < boardHeight )
+                {      
+                    cells[ xx + test2[i][0] ][ yy + test2[i][1] ].Kill();
+                }   
+            }
+
+            var test = [[-2, 0], [-1, -1], [-1, -2], [0, -2], [1, -2], [2, -1], [2, 0], [2, 1], [1, 2], [0, 2], [-1, 2], [-1, 1]];
+
+            for (var i = 0; i < test.length; i++){
+                if ((xx + test[i][0] >= 0 && xx + test[i][0] < boardWidth) && ( yy + test[i][1] >= 0 && yy + test[i][1] < boardHeight))
+                    {
+                        cells[xx + test[i][0]][yy + test[i][1]].Live();
+                    }   
+            }
         }
-
-
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawBoard(ctx, boardWidth, boardHeight);
@@ -222,9 +258,8 @@
        if(hexX >= 0 && hexX < boardWidth) {
             if(hexY >= 0 && hexY < boardHeight) {
                 if(currentHex != cells[hexX][hexY]){
-                    currentHex = cells[hexX][hexY];
-                    cells[hexX][hexY].Live();
-                    cells[hexX][hexY].Draw();
+                     cells[hexX][hexY].Live();
+                     cells[hexX][hexY].Draw();
                 }
             }
         }
@@ -267,7 +302,7 @@
             canvasContext.fill();
         } else {
             canvasContext.stroke();
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = "#fff";//EDITOR = #000
             canvasContext.fill();
         }
     }
