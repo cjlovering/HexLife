@@ -1,9 +1,10 @@
 (function(){
 
             
-
+            var Rules, SetA, SetB, SetC;
             var color = 0;
-
+            var right = true;
+            var counter = 0;
             var canvas;
             var resizeId;
 
@@ -21,7 +22,7 @@
 
             var cells = createCellArray();
 
-            var rate = 250;
+            var rate = 50;
 
             $(document).ready(function(){
                 
@@ -39,11 +40,20 @@
 
                     canvas.addEventListener("mousemove", function(eventInfo) {
                         mouseMoveResponse(eventInfo);
+                        Rules = SetA;
                     });
 
                     canvas.addEventListener("mouseup", function(eventInfo){
                 
                         inject(eventInfo);
+                        Rules = SetC;
+                        //currentHex.Draw();
+                    });
+
+                    canvas.addEventListener("mouseout", function(eventInfo){
+        
+                        inject(eventInfo);
+                        Rules = SetB;
                         //currentHex.Draw();
                     });
 
@@ -65,8 +75,43 @@
                     else if (n > 1)return true;
                     else return false;
                 }
+                else if (n > 2) return true;
+                
+            }
+            /* no change */
+            function SetA(n, l){
+                
+                if(l)
+                {
+                    if (n > 4) return false;
+                    else if (n > 1)return true;
+                    else return false;
+                }
+                else if (n > 2) return true;
+                
+            }
+            /* die fast */
+            function SetB(n, l){
+                
+                if(l)
+                {
+                    if (n > 3) return false;
+                    else if (n > 1)return true;
+                    else return false;
+                }
                 else if (n > 3) return true;
                 
+            }
+            /* groups maintain easy, new ones not */
+            function SetC(n, l){
+                
+                if(l)
+                {
+                    if (n > 5) return false;
+                    else if (n > 1)return true;
+                    else return false;
+                }
+                else if (n > 4) return true;      
             }
 
 
@@ -142,11 +187,35 @@
                 setTimeout(function(){
                     
                     for ( var i = 0; i < boardWidth; i++)
-                    for ( var j = 0; j < boardHeight; j++)
+                    
+                    for ( var j = 0; j < boardHeight; j++){
                         cells[i][j].Play();
+                    }
 
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     drawBoard(ctx, boardWidth, boardHeight);
+
+                    
+                    // if (right) {
+
+                    //     counter += 1;
+
+                    //     if (counter > boardWidth - 1){
+                    //         counter -= 1;
+                    //         right = false;
+                    //     }
+
+                    // } else {
+
+                    //     counter -= 1;
+
+                    //     if (counter < 0) {
+                    //         right = true;
+                    //         counter += 1;
+                    //     } 
+
+                    // }
+                    //counter = counter % (boardWidth - 1);
 
                     loop();
                 }, rate)
@@ -282,9 +351,6 @@
 
                 canvas.width = w;
                 canvas.height = h;  
-
-
-
 
                 sideLength = canvas.height > canvas.width ? canvas.height / boardHeight : canvas.width / boardWidth ;
                 hexHeight = Math.sin(hexagonAngle) * sideLength;
