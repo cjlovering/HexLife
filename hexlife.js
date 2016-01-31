@@ -22,7 +22,7 @@
 
             var cells = createCellArray();
 
-            var rate = 175;
+            var rate = 250;
 
             $(document).ready(function(){
                 
