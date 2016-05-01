@@ -71,11 +71,11 @@
                 
                 if(l)
                 {
-                    if (n > 4) return false;
+                    if (n > 3) return false;
                     else if (n > 1)return true;
                     else return false;
                 }
-                else if (n > 2) return true;
+                else if (n == 3) return true;
                 
             }
             /* no change */
